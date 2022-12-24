@@ -1,13 +1,26 @@
 const elForm = document.querySelector(".js-form");
 const elInput = document.querySelector(".js-input");
 const elList = document.querySelector(".js-list");
-let spanAll = document.querySelector(".js-span-all");
-let spanCompleted = document.querySelector(".js-span-completed");
-let spanUmCompleted = document.querySelector(".js-span-un-completed");
-const todos = [];
+const elAllCount = document.querySelector(".js-all-count");
+const elCompletedCount = document.querySelector(".js-completed-count");
+const elUncompletedCount = document.querySelector(".js-uncompleted-count");
+const elBtns = document.querySelector(".js-btns");
+
+const localData = JSON.parse(window.localStorage.getItem("todos"));
+console.log(localData);
+const todos = localData || [];
+
 let checkedInput = 0;
 const renderTodo = (array, node) => {
+  window.localStorage.setItem("todos", JSON.stringify(todos));
   node.innerHTML = "";
+  elAllCount.textContent = todos.length;
+  elCompletedCount.textContent = todos.filter(
+    (item) => item.isCompleted
+  ).length;
+  elUncompletedCount.textContent = todos.filter(
+    (item) => !item.isCompleted
+  ).length;
   array.forEach((item) => {
     const newItem = document.createElement("li");
     const newSpan = document.createElement("span");
@@ -44,33 +57,34 @@ const renderTodo = (array, node) => {
     node.appendChild(newItem);
   });
 };
+if(todos.length !== 0) {
+  renderTodo(todos, elList);
+}else {
+  const elTitle = document.createElement('h3')
+  elTitle.textContent = 'Todolar yoq 😐'
+  elList.appendChild(elTitle)
+  elTitle.setAttribute('class', 'text-center')
+}
 
 elForm.addEventListener("submit", (evt) => {
   evt.preventDefault();
 
   const newTodo = {
-    id: todos.length + 1,
+    id: todos.length ? todos[todos.length - 1].id + 1 : 1,
     text: elInput.value,
     isCompleted: false,
   };
   todos.push(newTodo);
   elInput.value = "";
   renderTodo(todos, elList);
-  spanAll.innerHTML = todos.length;
-  spanUmCompleted.textContent = todos.length;
 });
 
 elList.addEventListener("click", function (evt) {
   if (evt.target.matches(".js-delete-btn ")) {
-    spanUmCompleted.textContent = todos.length;
     const todoId = evt.target.dataset.todoID;
     const findedIndex = todos.findIndex((item) => item.id == todoId);
     todos.splice(findedIndex, 1);
     renderTodo(todos, elList);
-    spanAll.innerHTML = 0;
-    spanAll.innerHTML = todos.length;
-    spanUmCompleted.innerHTML = 0;
-    spanUmCompleted.innerHTML = todos.length;
   }
   if (evt.target.matches(".js-edit-btn")) {
     const todoId = evt.target.dataset.todoId;
@@ -84,42 +98,23 @@ elList.addEventListener("click", function (evt) {
     const findedItem = todos.find((item) => item.id == todoId);
     findedItem.isCompleted = !findedItem.isCompleted;
     renderTodo(todos, elList);
-    if (findedItem.isCompleted == true) {
-      checkedInput += 1;
-    }
-    if (findedItem.isCompleted == false) {
-      checkedInput -= 1;
-    }
-    spanCompleted.textContent = checkedInput;
-    spanUmCompleted.textContent = todos.length - checkedInput;
   }
 });
 
-let btnAll = document.querySelector(".btn-all");
-let btnCompleted = document.querySelector(".btn-completed");
-let btnUnCompleted = document.querySelector(".btn-un-completed");
-let btnBox = document.querySelector(".btn-box-js");
-
-btnBox.addEventListener("click", (evt) => {
-  if (evt.target.matches(".btn-all")) {
+elBtns.addEventListener("click", function (evt) {
+  if (evt.target.matches(".js-all")) {
     renderTodo(todos, elList);
   }
-  if (evt.target.matches(".btn-completed")) {
-    if (btnCompleted.textContent != 0) {
-      let filteredTodo = todos.filter((item) => {
-        if (item.isCompleted) {
-          return item;
-        }
-      });
-      spanCompleted.textContent = filteredTodo.length;
-      renderTodo(filteredTodo, elList);
-    }
+  if (evt.target.matches(".js-completed")) {
+    const filteredtodos = todos.filter((item) => item.isCompleted);
+    renderTodo(filteredtodos, elList);
   }
-  if (evt.target.matches(".btn-un-completed")) {
-    if (btnCompleted.textContent != 0) {
-      let filteredTodo = todos.filter((item) => item.isCompleted == false);
-      spanUmCompleted.textContent = filteredTodo.length;
-      renderTodo(filteredTodo, elList);
-    }
+  if (evt.target.matches(".js-uncompleted")) {
+    const filteredtodos = todos.filter((item) => !item.isCompleted);
+    renderTodo(filteredtodos, elList);
+  }
+  if (evt.target.matches(".js-all-delete")) {
+    window.localStorage.removeItem("todos");
+    location.reload();
   }
 });
