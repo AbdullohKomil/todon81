@@ -10,11 +10,39 @@
       rel="stylesheet"
       integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
       crossorigin="anonymous"
-      mfrmmfrkmkfrkmfkrmfkrmfr2
     />
+    <style>
+      :root {
+        --icon-mode: url("./images/light-mode.svg");
+        --bg-color: white;
+        --text-color: black;
+        --bg-initial: inherit;
+      }
+      .dark {
+        --bg-color: black;
+        --icon-mode: url("./images/dark-mode.svg");
+        --bg-initial: white;
+        --text-color: white;
+      }
+      body {
+        color: var(--text-color);
+        background-color: var(--bg-color);
+      }
+      .dark-mode-btn {
+        background-color: var(--bg-initial);
+        padding: 20px;
+        background-image: var(--icon-mode);
+      }
+      button {
+        border: none;
+      }
+    </style>
   </head>
   <body>
     <div class="container">
+      <div class="mode-btn-box text-center">
+        <button class="dark-mode-btn mt-5"></button>
+      </div>
       <h1 class="text-center h1 my-5">TODO</h1>
       <form class="js-form w-50 mx-auto">
         <div class="input-group">

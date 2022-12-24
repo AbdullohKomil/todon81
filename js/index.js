@@ -7,7 +7,6 @@ const elUncompletedCount = document.querySelector(".js-uncompleted-count");
 const elBtns = document.querySelector(".js-btns");
 
 const localData = JSON.parse(window.localStorage.getItem("todos"));
-console.log(localData);
 const todos = localData || [];
 
 let checkedInput = 0;
@@ -57,13 +56,13 @@ const renderTodo = (array, node) => {
     node.appendChild(newItem);
   });
 };
-if(todos.length !== 0) {
+if (todos.length !== 0) {
   renderTodo(todos, elList);
-}else {
-  const elTitle = document.createElement('h3')
-  elTitle.textContent = 'Todolar yoq 😐'
-  elList.appendChild(elTitle)
-  elTitle.setAttribute('class', 'text-center')
+} else {
+  const elTitle = document.createElement("h3");
+  elTitle.textContent = "Todolar yoq 😐";
+  elList.appendChild(elTitle);
+  elTitle.setAttribute("class", "text-center");
 }
 
 elForm.addEventListener("submit", (evt) => {
@@ -118,3 +117,22 @@ elBtns.addEventListener("click", function (evt) {
     location.reload();
   }
 });
+
+const btnMode = document.querySelector(".dark-mode-btn");
+let theme = false;
+
+btnMode.addEventListener("click", () => {
+  theme = !theme;
+  const bg = theme ? "dark" : "light";
+  window.localStorage.setItem("theme", bg);
+  changeTheme();
+});
+
+function changeTheme() {
+  if (window.localStorage.getItem("theme") == "dark") {
+    document.body.classList.add("dark");
+  } else {
+    document.body.classList.remove("dark");
+  }
+}
+changeTheme();
